@@ -15,6 +15,8 @@ with open('airports.dat') as fp:
         iata_city_to_lat_lon[iata_city] = (lat, lon)
     # special case LHR because we really want LCY
     iata_city_to_lat_lon["LHR"] = iata_city_to_lat_lon["LCY"]
+    # special case MTL because the Canadians really mean YUL
+    iata_city_to_lat_lon["MTL"] = iata_city_to_lat_lon["YUL"]
 
 def node_name_to_iata_city(node_name):
     m = re.search(r'^ns\d\d.([a-z]{3}).ca-servers.ca$', node_name, re.I)
