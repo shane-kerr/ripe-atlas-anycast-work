@@ -16,6 +16,11 @@ with open('airports.dat') as fp:
     # special case LHR because we really want LCY
     iata_city_to_lat_lon["LHR"] = iata_city_to_lat_lon["LCY"]
 
+instances = []
+with open('instances.txt') as fp:
+    for line in fp:
+        instances.append(line.strip())
+
 def node_name_to_iata_city(node_name):
     # this is the CIRA ANY.CA-SERVERS.CA mapping of HOSTNAME.BIND
     m = re.search(r'^ns\d\d.([a-z]{3}).ca-servers.ca$', node_name, re.I)
@@ -26,6 +31,22 @@ def node_name_to_iata_city(node_name):
             city = "YUL"
         return city
     return None
+
+def great_circle_dist(lat1, lon1, lat2, lon2):
+    # convert to radians because math
+    lon1 = lon1 * pi / 180
+    lat1 = lat1 * pi / 180
+    lon2 = lon2 * pi / 180
+    lat2 = lat2 * pi / 180
+
+    # maths!
+    theta = lon2 - lon1
+    dist = acos(sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(theta))
+    if (dist < 0):
+        dist = dist + pi
+    dist = dist * 6371.2
+
+    return dist
 
 all_fixed_json = []
 result_total = 0
@@ -47,7 +68,7 @@ for measurement in json.load(sys.stdin):
     iata_city = node_name_to_iata_city(node_name)
     if iata_city not in iata_city_to_lat_lon:
         print(iata_city)
-        print('Missing latitude/longitude for "{}"'.format(node_name), 
+        print('Missing latitude/longitude for "{}"'.format(node_name),
               file=sys.stderr)
         sys.exit(1)
     fixed_json["dst_city"] = iata_city
@@ -63,19 +84,21 @@ for measurement in json.load(sys.stdin):
     fixed_json["src_lat"] = lat2
     fixed_json["src_lon"] = lon2
 
-    # convert to radians because math
-    lon1 = lon1 * pi / 180
-    lat1 = lat1 * pi / 180
-    lon2 = lon2 * pi / 180
-    lat2 = lat2 * pi / 180
+    # this is the distance used
+    actual_dist = great_circle_dist(lat1, lon1, lat2, lon2)
+    fixed_json["dist"] = actual_dist
 
-    theta = lon2 - lon1
-    dist = acos(sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(theta))
-    if (dist < 0):
-        dist = dist + pi
-    dist = dist * 6371.2 
+    # also figure out all possible distances
+    best_dist = actual_dist
+    for instance in instances:
+        lat1, lon1 = iata_city_to_lat_lon[instance]
+        dist = great_circle_dist(lat1, lon1, lat2, lon2)
+        fixed_json["dist_" + instance] = dist
+        best_dist = min(best_dist, dist)
 
-    fixed_json["dist"] = dist
+    # best distance
+    fixed_json["dist_theoretical"] = best_dist
+    fixed_json["dist_theoretical_improvement"] = actual_dist - best_dist
 
     all_fixed_json.append(json.dumps(fixed_json, indent=2, sort_keys=True))
 

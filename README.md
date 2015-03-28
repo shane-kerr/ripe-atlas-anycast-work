@@ -1,6 +1,6 @@
 A few tools to help us graph anycast results.
 
-* add-probe-info.py
+* `add-probe-info.py`
   This tool takes the JSON results of a RIPE Measurement and puts
   certain information about the probe that took the measurement into
   the measurement.
@@ -15,9 +15,18 @@ A few tools to help us graph anycast results.
   Requires a file named `meta-probes.txt` which has a list of all
   probe information in JSON format.
 
-* add-dist.py
-  This tool takes the results of the above tool, and figures out the
-  physical distance from the source probe to the destination DNS
+* `get-instances-in-results.py`
+  This goes through the output of `add-probe-info.py` and finds all
+  of the instances in the set. This is all of the HOSTNAME.BIND
+  values.
+
+  Usage:
+
+      $ python3 get-instances-in-results.py < meas-with-probe.json > instances.txt
+
+* `add-dist.py`
+  This tool takes the results of `add-probe-info.py`, and figures out
+  the physical distance from the source probe to the destination DNS
   server, and adds that information to the JSON output.
 
   Usage:
@@ -27,3 +36,5 @@ A few tools to help us graph anycast results.
   Requires the file named `airports.dat` which you can get from:
 
   https://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airports.dat?format=raw
+
+  Resquires the file named `instances.txt` which you can get above.
