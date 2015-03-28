@@ -37,6 +37,7 @@ print("Good measurements:  {} ({:5.2f}%)".format(cnt_good,
                                                  100*cnt_good / cnt_total), 
       file=sys.stderr)
 
-print("Missing probes:", file=sys.stderr)
-for missing_probe in sorted(list(missing_probes)):
-   print(missing_probe, file=sys.stderr)
+if missing_probes:
+    print("Missing probes:", file=sys.stderr)
+    for missing_probe in sorted(list(missing_probes)):
+       print(missing_probe, file=sys.stderr)
