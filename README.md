@@ -8,7 +8,7 @@ A few tools to help us graph anycast results.
   We add `asn_v4`, `asn_v6`, `latitude`, `longitude`, and
   `country_code`.
 
-  Usage::
+  Usage:
   
-  $ python3 add-probe-info < measurement.json
+      $ python3 add-probe-info < measurement.json
 
