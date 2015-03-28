@@ -15,13 +15,16 @@ with open('airports.dat') as fp:
         iata_city_to_lat_lon[iata_city] = (lat, lon)
     # special case LHR because we really want LCY
     iata_city_to_lat_lon["LHR"] = iata_city_to_lat_lon["LCY"]
-    # special case MTL because the Canadians really mean YUL
-    iata_city_to_lat_lon["MTL"] = iata_city_to_lat_lon["YUL"]
 
 def node_name_to_iata_city(node_name):
+    # this is the CIRA ANY.CA-SERVERS.CA mapping of HOSTNAME.BIND
     m = re.search(r'^ns\d\d.([a-z]{3}).ca-servers.ca$', node_name, re.I)
     if m:
-        return m.group(1).upper()
+        city = m.group(1).upper()
+        # special case MTL because the Canadians really mean YUL
+        if city == "MTL":
+            city = "YUL"
+        return city
     return None
 
 all_fixed_json = []
@@ -47,6 +50,7 @@ for measurement in json.load(sys.stdin):
         print('Missing latitude/longitude for "{}"'.format(node_name), 
               file=sys.stderr)
         sys.exit(1)
+    fixed_json["dst_city"] = iata_city
     lat1, lon1 = iata_city_to_lat_lon[iata_city]
 
     lat2 = fixed_json["latitude"]
