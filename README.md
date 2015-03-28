@@ -12,3 +12,5 @@ A few tools to help us graph anycast results.
   
       $ python3 add-probe-info < measurement.json
 
+  Requires a file named `meta-probes.txt` which has a list of all
+  probe information in JSON format.
