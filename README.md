@@ -26,4 +26,4 @@ A few tools to help us graph anycast results.
 
   Requires the file named `airports.dat` which you can get from:
 
-      https://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airports.dat?format=raw
+  https://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airports.dat?format=raw
