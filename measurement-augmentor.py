@@ -107,7 +107,8 @@ def node_name_to_city_lat_lon(node_name):
         lat, lon = iata_city_to_lat_lon[city]
 
     # this is the CIRA ANY.CA-SERVERS.CA mapping of HOSTNAME.BIND
-    m = re.search(r'^ns\d\d.([a-z]{3}).ca-servers.ca$', node_name, re.I)
+    m = re.search(r'^ns\d\d.([a-z]{3}).(ca-servers|d-zone).ca$',
+                  node_name, re.I)
     if m:
         city = m.group(1).upper()
         # special case MTL because the Canadians really mean YUL
