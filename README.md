@@ -10,7 +10,7 @@ A few tools to help us graph anycast results.
 
   Usage:
   
-      $ python3 add-probe-info < measurement.json > meas-with-probe.json
+      $ python3 add-probe-info.py < measurement.json > meas-with-probe.json
 
   Requires a file named `meta-probes.txt` which has a list of all
   probe information in JSON format.
