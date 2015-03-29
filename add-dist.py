@@ -22,6 +22,10 @@ with open('instances.txt') as fp:
         instances.append(line.strip())
 
 def node_name_to_iata_city(node_name):
+    # this is the CloudFlare format - so simple!
+    if len(node_name) == 3:
+        return node_name.upper()
+
     # this is the CIRA ANY.CA-SERVERS.CA mapping of HOSTNAME.BIND
     m = re.search(r'^ns\d\d.([a-z]{3}).ca-servers.ca$', node_name, re.I)
     if m:

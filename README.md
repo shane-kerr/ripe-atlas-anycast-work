@@ -1,40 +1,28 @@
 A few tools to help us graph anycast results.
 
-* `add-probe-info.py`
-  This tool takes the JSON results of a RIPE Measurement and puts
-  certain information about the probe that took the measurement into
-  the measurement.
+We need some stuff to work:
 
-  We add `asn_v4`, `asn_v6`, `latitude`, `longitude`, and
-  `country_code`.
-
-  Usage:
-  
-      $ python3 add-probe-info.py < measurement.json > meas-with-probe.json
-
-  Requires a file named `meta-probes.txt` which has a list of all
+* Requires a file named `meta-probes.json` which has a list of all
   probe information in JSON format.
-
-* `get-instances-in-results.py`
-  This goes through the output of `add-probe-info.py` and finds all
-  of the instances in the set. This is all of the HOSTNAME.BIND
-  values.
-
-  Usage:
-
-      $ python3 get-instances-in-results.py < meas-with-probe.json > instances.txt
-
-* `add-dist.py`
-  This tool takes the results of `add-probe-info.py`, and figures out
-  the physical distance from the source probe to the destination DNS
-  server, and adds that information to the JSON output.
-
-  Usage:
-
-      $ python3 add-dist.py < meas-with-probe.json > meas-with-dist.json
-
-  Requires the file named `airports.dat` which you can get from:
+* Requires the dateutil library (`apt-get install python3-dateutil` in
+  Debian & derivatives).
+* Requires the curl utility (`apt-get install curl` in Debian &
+  derivatives).
+* Requires IATA information (`airports.dat`),  which you can get from:
 
   https://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airports.dat?format=raw
+* Requires the UN/LOCODE csv data (`2014-2 UNLOCODE CodeListPart[123].csv`),
+  which you can get from:
 
-  Resquires the file named `instances.txt` which you can get above.
+  http://www.unece.org/cefact/codesfortrade/codes_index.html
+
+To run:
+
+    $ python3 measurement-augmentor.py 
+    Syntax: measurement-augmentor.py measurement_id [date_start [date_end]]
+    measurement_id  - RIPE Atlas measurement ID
+    date_start      - date/time to start output at
+    date_end        - date/time to stop output at
+
+    $ python3 measurement-augmentor.py 1911128
+
