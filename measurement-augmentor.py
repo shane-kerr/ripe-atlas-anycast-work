@@ -244,6 +244,7 @@ for measurement in measurements:
             print("Unable to convert instance '{}' to city (second)".
                   format(instance_name), file=sys.stderr)
             sys.exit(1)
+        measurement["dst"] = city
         measurement["dst_lat"] = dst_lat
         measurement["dst_lon"] = dst_lon
         src_lat = measurement["src_lat"]
