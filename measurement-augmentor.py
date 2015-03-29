@@ -93,8 +93,13 @@ for fname in glob.glob('*UNLOCODE*.csv'):
                 lat = lon = None
             un_locode_to_lat_lon[country+location] = (lat, lon)
     # add a few sites since they're not properly listed
+    un_locode_to_lat_lon["CATOR"] = iata_city_to_lat_lon["YYZ"]
+    un_locode_to_lat_lon["GBLON"] = iata_city_to_lat_lon["LCY"]
+    un_locode_to_lat_lon["HKHKG"] = iata_city_to_lat_lon["HKG"]
+    un_locode_to_lat_lon["NLAMS"] = iata_city_to_lat_lon["AMS"]
     un_locode_to_lat_lon["USIAD"] = iata_city_to_lat_lon["IAD"]
     un_locode_to_lat_lon["USLAX"] = iata_city_to_lat_lon["LAX"]
+    un_locode_to_lat_lon["USMIA"] = iata_city_to_lat_lon["MIA"]
     un_locode_to_lat_lon["USNBN"] = iata_city_to_lat_lon["LGA"]
     un_locode_to_lat_lon["USSNN"] = iata_city_to_lat_lon["SJC"]
 
@@ -121,7 +126,7 @@ def node_name_to_city_lat_lon(node_name):
         lat, lon = iata_city_to_lat_lon[city]
 
     # this is the Dyn Hivecast mapping of HOSTNAME.BIND
-    m = re.search(r'^hivecast-\d\d-([a-z]{2})([a-z]{3}).as15135.net \S+$',
+    m = re.search(r'^hivecast-\d+-([a-z]{2})([a-z]{3}).as15135.net \S+$',
                   node_name)
     if m:
         country = m.group(1).upper()
@@ -130,9 +135,11 @@ def node_name_to_city_lat_lon(node_name):
         lat, lon = un_locode_to_lat_lon[city]
 
     if city:
+        assert lat, "Missing latitude for {}".format(city)
+        assert lon, "Missing longitude for {}".format(city)
         return city, lat, lon
     else:
-        return None
+        return None, None, None
 
 ## 
 ## Download the measurement JSON
@@ -188,7 +195,7 @@ for measurement in json.load(fp):
         instance_name = measurement["result"]["answers"][0]["RDATA"]
         city, lat, lon = node_name_to_city_lat_lon(instance_name)
         if not city:
-            print("Unable to convert instance '{}' to city".
+            print("Unable to convert instance '{}' to city (first)".
                   format(instance_name), file=sys.stderr)
             sys.exit(1)
         instance_to_lat_lon[city] = (lat, lon)
@@ -234,7 +241,7 @@ for measurement in measurements:
         instance_name = measurement["result"]["answers"][0]["RDATA"]
         city, dst_lat, dst_lon = node_name_to_city_lat_lon(instance_name)
         if not city:
-            print("Unable to convert instance '{}' to city".
+            print("Unable to convert instance '{}' to city (second)".
                   format(instance_name), file=sys.stderr)
             sys.exit(1)
         measurement["dst_lat"] = dst_lat
