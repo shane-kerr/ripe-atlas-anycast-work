@@ -5,6 +5,8 @@ from math import acos, sin, cos, pi
 import os
 import re
 import sys
+import time
+
 import dateutil.parser
 
 # Requires: probe information ("meta-probes.json")
@@ -37,9 +39,11 @@ date_end_sec = None
 if len(sys.argv) > 2:
     date_start = dateutil.parser.parse(sys.argv[2])
     date_start_sec = int(date_start.timestamp())
+    date_start_iso = time.strftime("%Y%m%dT%H%M%S", time.gmtime(date_start_sec))
 if len(sys.argv) > 3:
     date_end = dateutil.parser.parse(sys.argv[3])
     date_end_sec = int(date_end.timestamp())
+    date_end_iso = time.strftime("%Y%m%dT%H%M%S", time.gmtime(date_end_sec))
 
 ##
 ## Read in our probe information
@@ -138,11 +142,11 @@ if date_end_sec is not None:
            "start={}&stop={}&format=json".format(measurement_id,
                                                  date_start_sec, date_end_sec))
     meas_fname = "atlas-meas-{}-{}-{}".format(measurement_id,
-                                              date_start_sec, date_end_sec)
+                                              date_start_iso, date_end_iso)
 elif date_start_sec is not None:
     url = ("https://atlas.ripe.net/api/v1/measurement/{}/result/?"
            "start={}&format=json".format(measurement_id, date_start_sec))
-    meas_fname = "atlas-meas-{}-{}".format(measurement_id, date_start_sec)
+    meas_fname = "atlas-meas-{}-{}".format(measurement_id, date_start_iso)
 else:
     url = ("https://atlas.ripe.net/api/v1/measurement/{}/result/?"
            "format=json".format(measurement_id))
